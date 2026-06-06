@@ -1,0 +1,234 @@
+# seed_datasets.yaml
+# ===================
+# Curated catalogue of Indic ASR datasets.
+# This is the ONLY file humans edit when adding new datasets.
+#
+# Schema for each entry:
+#   id:            Unique stable identifier (usually org/repo or short name)
+#   name:          Human-readable dataset name
+#   adapter:       Adapter class to use (see indic_asr/adapters/)
+#   source_type:   huggingface | openslr | custom_url | local
+#   hf_repo_id:    HuggingFace dataset repo ID
+#   hf_configs:    List of config names (null = auto-detect)
+#   languages:     BCP-47 language codes covered
+#   license:       SPDX license identifier (cc0-1.0, cc-by-4.0, etc.)
+#   quality_tier:  gold | silver | bronze | unknown
+#   enabled:       true | false (false = skip during ingest)
+#   notes:         Optional human notes
+#
+# When adding a new dataset:
+#   1. Add entry here with enabled: false
+#   2. Run: python scripts/ingest.py --dry-run --ids <id>
+#   3. If looks good, set enabled: true and run ingest
+
+datasets:
+
+  # ---------------------------------------------------------------------------
+  # Mozilla Common Voice
+  # The largest public multilingual speech corpus.
+  # CC0 licensed (public domain).
+  # Quality: Silver (crowd-sourced with community validation)
+  # ---------------------------------------------------------------------------
+  - id: "mozilla-foundation/common_voice_17_0"
+    name: "Mozilla Common Voice 17.0"
+    adapter: CommonVoiceAdapter
+    source_type: huggingface
+    hf_repo_id: "mozilla-foundation/common_voice_17_0"
+    hf_configs:
+      - hi       # Hindi
+      - bn       # Bengali
+      - mr       # Marathi
+      - ta       # Tamil
+      - te       # Telugu
+      - kn       # Kannada
+      - ml       # Malayalam
+      - ur       # Urdu
+      - gu       # Gujarati
+      - pa-IN    # Punjabi
+      - or       # Odia
+      - as       # Assamese
+      - ne-NP    # Nepali
+      - sa       # Sanskrit
+    languages: [hi, bn, mr, ta, te, kn, ml, ur, gu, pa, or, as, ne, sa]
+    license: cc0-1.0
+    quality_tier: silver
+    enabled: true
+    notes: >
+      Largest version of Common Voice with most Indic language coverage.
+      Crowd-sourced read speech from CV sentences corpus.
+      Audio is MP3 @ 32kbps, transcripts are in native script.
+
+  # ---------------------------------------------------------------------------
+  # Google FLEURS
+  # Few-shot Learning Evaluation of Universal Representations of Speech.
+  # Small but very high quality. Used as standard benchmark.
+  # CC-BY 4.0 licensed.
+  # Quality: Gold (carefully curated, diverse speakers)
+  # ---------------------------------------------------------------------------
+  - id: "google/fleurs"
+    name: "Google FLEURS"
+    adapter: FLEURSAdapter
+    source_type: huggingface
+    hf_repo_id: "google/fleurs"
+    hf_configs:
+      - hi_in    # Hindi (India)
+      - bn_in    # Bengali (India)
+      - as_in    # Assamese
+      - gu_in    # Gujarati
+      - mr_in    # Marathi
+      - pa_in    # Punjabi
+      - or_in    # Odia
+      - ta_in    # Tamil
+      - te_in    # Telugu
+      - kn_in    # Kannada
+      - ml_in    # Malayalam
+      - ne_np    # Nepali (Nepal)
+      - ur_pk    # Urdu (Pakistan)
+    languages: [hi, bn, as, gu, mr, pa, or, ta, te, kn, ml, ne, ur]
+    license: cc-by-4.0
+    quality_tier: gold
+    enabled: true
+    notes: >
+      FLEURS is derived from FLoRes machine translation benchmark sentences.
+      ~12 hours per language. 10 speakers per language.
+      Standard ASR evaluation benchmark. DO NOT include test split in training.
+      Audio is 16kHz WAV.
+
+  # ---------------------------------------------------------------------------
+  # AI4Bharat Shrutilipi
+  # Large-scale broadcast news corpus. 6400+ hours across 12 languages.
+  # CC-BY 4.0 licensed.
+  # Quality: Silver (automatic alignment with human verification)
+  # ---------------------------------------------------------------------------
+  - id: "ai4bharat/shrutilipi"
+    name: "AI4Bharat Shrutilipi"
+    adapter: ShrutilipiAdapter
+    source_type: huggingface
+    hf_repo_id: "ai4bharat/shrutilipi"
+    hf_configs: null  # Single config, one language per subset
+    languages: [hi, mr, ta, te, kn, ml, gu, bn, or, pa, as, ur]
+    license: cc-by-4.0
+    quality_tier: silver
+    enabled: true
+    notes: >
+      Largest publicly available Indic broadcast ASR corpus.
+      Audio sourced from AIR (All India Radio) and Doordarshan.
+      Transcripts aligned using Wav2Vec2. High confidence filtering applied.
+      Audio is 16kHz mono FLAC.
+
+  # ---------------------------------------------------------------------------
+  # AI4Bharat IndicSUPERB
+  # Benchmark suite for Indic speech understanding.
+  # CC-BY 4.0.
+  # Quality: Gold (curated benchmark)
+  # ---------------------------------------------------------------------------
+  - id: "ai4bharat/IndicSUPERB"
+    name: "AI4Bharat IndicSUPERB"
+    adapter: GenericHFAdapter
+    source_type: huggingface
+    hf_repo_id: "ai4bharat/IndicSUPERB"
+    hf_configs: null
+    languages: [hi, bn, as, gu, mr, pa, or, ta, te, kn, ml, ne, ur, sa]
+    license: cc-by-4.0
+    quality_tier: gold
+    enabled: true
+    notes: >
+      IndicSUPERB benchmark. Useful as a standardized evaluation set.
+      Contains multiple tasks including ASR.
+      Prefer using test split only for evaluation.
+
+  # ---------------------------------------------------------------------------
+  # Kathbath (IIT Madras)
+  # Diverse Indic ASR benchmark with multiple acoustic conditions.
+  # CC-BY 4.0.
+  # Quality: Gold (studio + real-world conditions)
+  # ---------------------------------------------------------------------------
+  - id: "iitm-lab/kathbath"
+    name: "Kathbath Indic Speech Dataset"
+    adapter: GenericHFAdapter
+    source_type: huggingface
+    hf_repo_id: "iitm-lab/kathbath"
+    hf_configs: null
+    languages: [hi, bn, as, gu, mr, pa, or, ta, te, kn, ml]
+    license: cc-by-4.0
+    quality_tier: gold
+    enabled: false  # TODO: verify schema compatibility
+    notes: >
+      Recorded in real-world conditions (clean, noisy, very-noisy).
+      Useful for robustness evaluation.
+      Enable after verifying adapter compatibility.
+
+  # ---------------------------------------------------------------------------
+  # SMC Malayalam Speech Corpus
+  # Community-contributed Malayalam speech.
+  # CC-BY-SA 4.0.
+  # Quality: Silver
+  # ---------------------------------------------------------------------------
+  - id: "SMC/malayalam-asr-corpus"
+    name: "SMC Malayalam ASR Corpus"
+    adapter: GenericHFAdapter
+    source_type: huggingface
+    hf_repo_id: "SMC/malayalam-asr-corpus"
+    hf_configs: null
+    languages: [ml]
+    license: cc-by-sa-4.0
+    quality_tier: silver
+    enabled: false  # TODO: verify
+    notes: >
+      Swathanthra Malayalam Computing community contribution.
+      Read speech from diverse volunteers.
+
+  # ---------------------------------------------------------------------------
+  # Granth (Sanskrit)
+  # Sanskrit ASR dataset from IIT Madras
+  # License: research-only
+  # Quality: Gold (studio recorded)
+  # ---------------------------------------------------------------------------
+  - id: "iitm-lab/granth-sanskrit"
+    name: "Granth Sanskrit ASR Dataset"
+    adapter: GenericHFAdapter
+    source_type: huggingface
+    hf_repo_id: "iitm-lab/granth-sanskrit"
+    hf_configs: null
+    languages: [sa]
+    license: research-only
+    quality_tier: gold
+    enabled: false  # Research-only license: verify terms before enabling
+    notes: >
+      Sanskrit ASR corpus from IIT Madras SPRING Lab.
+      Research-only license: do NOT use in commercial models.
+      Enable only if your use case permits research-only content.
+
+  # ---------------------------------------------------------------------------
+  # OpenSLR Indic Datasets (via HF mirrors)
+  # Various OpenSLR resources mirrored to HuggingFace
+  # ---------------------------------------------------------------------------
+  - id: "openslr/openslr"
+    name: "OpenSLR Indic Resources"
+    adapter: GenericHFAdapter
+    source_type: huggingface
+    hf_repo_id: "openslr/openslr"
+    hf_configs: null
+    languages: [hi, ta, te, kn, ml, gu, mr, bn]
+    license: cc-by-4.0
+    quality_tier: silver
+    enabled: false  # Complex multi-resource, needs custom adapter
+    notes: >
+      OpenSLR hosts multiple Indic resources (SLR37, SLR52, SLR53, etc.)
+      Currently needs a custom OpenSLRAdapter implementation.
+      Disable until adapter is written.
+
+  # TEMPLATE FOR NEW DATASETS
+  # Copy this block and fill in the fields
+  # ---------------------------------------------------------------------------
+  # - id: "org/dataset-name"
+  #   name: "Human Readable Name"
+  #   adapter: GenericHFAdapter  # Choose the right adapter
+  #   source_type: huggingface
+  #   hf_repo_id: "org/dataset-name"
+  #   hf_configs: null           # or list specific configs
+  #   languages: [hi]            # BCP-47 codes
+  #   license: unknown           # Update after checking
+  #   quality_tier: unknown      # Update after assessment
+  #   enabled: false             # Enable after dry-run verification
+  #   notes: "Notes about this dataset"

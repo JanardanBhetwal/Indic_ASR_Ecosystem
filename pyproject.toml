@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "indic-asr"
+version = "0.1.0"
+description = "Indic ASR Dataset Ecosystem — aggregation, normalization, and manifest generation"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+
+dependencies = [
+    "pydantic>=2.0",
+    "datasets>=2.14",
+    "huggingface_hub>=0.20",
+    "pyyaml>=6.0",
+    "pyarrow>=14.0",
+    "pandas>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+]
+audio = [
+    "librosa>=0.10",
+    "soundfile",
+    "numpy",
+]
+
+[project.scripts]
+indic-discover = "scripts.discover:main"
+indic-ingest = "scripts.ingest:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+strict = false
+ignore_missing_imports = true
