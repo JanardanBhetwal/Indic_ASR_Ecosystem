@@ -200,7 +200,12 @@ class BaseAdapter(ABC):
         """
         try:
             from datasets import load_dataset_builder
-            builder = load_dataset_builder(repo_id, config, trust_remote_code=False)
+            try:
+                builder = load_dataset_builder(repo_id, config, trust_remote_code=False)
+            except TypeError:
+                # Parquet-native datasets (no custom loading script) use ParquetConfig
+                # internally, which does not accept trust_remote_code. Fall back without it.
+                builder = load_dataset_builder(repo_id, config)
             return builder
         except Exception as e:
             logger.warning(f"Could not load builder for {repo_id}/{config}: {e}")

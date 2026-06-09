@@ -53,8 +53,8 @@ class GenericHFAdapter(BaseAdapter):
     ]
     SPLIT_FALLBACKS = {
         "validation": ["dev", "valid", "val"],
-        "test": ["eval", "test_clean"],
-        "train": ["training", "train_clean"],
+        "test": ["eval", "test_clean", "benchmark"],
+        "train": ["training", "train_clean", "train_real", "train_synthetic"],
     }
 
     @classmethod
